@@ -1,10 +1,14 @@
-use crate::parser::{get_input, TodoJson};
+use crate::date::Date;
+use crate::json_todo::JsonTodo;
+use crate::parser::get_input;
+use crate::time::Time;
+use crate::time_remaining::TimeRemaining;
+
 use chrono::{offset::Local, DateTime, TimeZone};
 use std::cmp::Ordering;
-use std::fmt::{self, Debug};
+use std::fmt;
 use std::time::SystemTime;
 
-#[derive(Debug)]
 pub struct Todo {
     pub title: String,
     pub description: String,
@@ -41,93 +45,6 @@ impl PartialEq for Todo {
 
 impl Eq for Todo {}
 
-#[derive(Debug)]
-pub struct Date {
-    pub year: i32,
-    pub month: u32,
-    pub day: u32,
-}
-
-impl fmt::Display for Date {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}/{}/{}", self.day, self.month, self.year)
-    }
-}
-
-#[derive(Debug)]
-pub struct Time {
-    pub hour: u32,
-    pub minute: u32,
-}
-
-impl fmt::Display for Time {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}:{}", self.hour, self.minute)
-    }
-}
-
-pub struct TimeRemaining {
-    pub days: i32,
-    pub hours: i32,
-    pub minutes: i32,
-}
-
-impl PartialOrd for TimeRemaining {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for TimeRemaining {
-    fn cmp(&self, other: &Self) -> Ordering {
-        if self.days > other.days {
-            Ordering::Greater
-        } else if self.days < other.days {
-            Ordering::Less
-        } else {
-            if self.hours > other.hours {
-                Ordering::Greater
-            } else if self.hours < other.hours {
-                Ordering::Less
-            } else {
-                if self.minutes > other.minutes {
-                    Ordering::Greater
-                } else if self.minutes < other.minutes {
-                    Ordering::Less
-                } else {
-                    Ordering::Equal
-                }
-            }
-        }
-    }
-}
-
-impl PartialEq for TimeRemaining {
-    fn eq(&self, other: &Self) -> bool {
-        self.days == other.days && self.hours == other.hours && self.minutes == other.minutes
-    }
-}
-
-impl Eq for TimeRemaining {}
-
-impl fmt::Display for TimeRemaining {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let days = if self.days != 1 { "days" } else { "day" };
-        let hours = if self.hours != 1 { "hours" } else { "hour" };
-        let minutes = if self.minutes != 1 {
-            "minutes"
-        } else {
-            "minute"
-        };
-
-        write!(
-            f,
-            "{} {}, {} {}, {} {}",
-            self.days, days, self.hours, hours, self.minutes, minutes
-        )
-    }
-}
-
 impl Todo {
     pub fn time_left(&self) -> TimeRemaining {
         let current_time = SystemTime::now();
@@ -156,8 +73,8 @@ impl Todo {
         }
     }
 
-    pub fn to_json_todo(&self) -> TodoJson {
-        TodoJson {
+    pub fn to_json_todo(&self) -> JsonTodo {
+        JsonTodo {
             title: self.title.to_owned(),
             description: self.description.to_owned(),
             topic: self.topic.to_owned(),
@@ -167,7 +84,7 @@ impl Todo {
     }
 
     pub fn new() -> Todo {
-        let todo_json = TodoJson {
+        let todo_json = JsonTodo {
             title: get_input("Enter the title: "),
             description: get_input("Enter the description: "),
             topic: get_input("Enter the topic: "),

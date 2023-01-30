@@ -1,43 +1,9 @@
-use serde::{Deserialize, Serialize};
+use crate::json_todo::TodoVector;
+use crate::todo::Todo;
+
 use serde_json;
-use std::io::{self, Write};
-
 use std::fs;
-
-use crate::todo::{Date, Time, Todo};
-
-#[derive(Deserialize, Serialize)]
-pub struct TodoJson {
-    pub title: String,
-    pub description: String,
-    pub topic: String,
-    pub date: String,
-    pub time: String,
-}
-
-#[derive(Deserialize, Serialize)]
-pub struct TodoVector {
-    pub todo: Vec<TodoJson>,
-}
-
-impl TodoJson {
-    pub fn parse_date(&self) -> Date {
-        let split = self.date.split("/").collect::<Vec<&str>>(); // "dd", "mm", "yyyy"
-        Date {
-            year: split[2].parse::<i32>().unwrap(),
-            month: split[1].parse::<u32>().unwrap(),
-            day: split[0].parse::<u32>().unwrap(),
-        }
-    }
-
-    pub fn parse_time(&self) -> Time {
-        let split = self.time.split(":").collect::<Vec<&str>>();
-        Time {
-            hour: split[0].parse::<u32>().unwrap(),
-            minute: split[1].parse::<u32>().unwrap(),
-        }
-    }
-}
+use std::io::{self, Write};
 
 pub fn parse_todo() -> Vec<Todo> {
     let todo_json = fs::read_to_string("todo.json").unwrap();

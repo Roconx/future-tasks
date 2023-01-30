@@ -1,6 +1,12 @@
+mod date;
+mod json_todo;
 mod parser;
+mod time;
+mod time_remaining;
 mod todo;
+
 use crate::todo::Todo;
+
 use parser::{get_input, save_todo};
 use std::env;
 
