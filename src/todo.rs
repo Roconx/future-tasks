@@ -1,5 +1,6 @@
-use crate::parser::{TodoJson, get_input};
+use crate::parser::{get_input, TodoJson};
 use chrono::{offset::Local, DateTime, TimeZone};
+use std::cmp::Ordering;
 use std::fmt::{self, Debug};
 use std::time::SystemTime;
 
@@ -19,6 +20,26 @@ impl fmt::Display for Todo {
          self.title, self.description, self.topic, self.date, self.time, self.time_left())
     }
 }
+
+impl PartialOrd for Todo {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Todo {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.time_left().cmp(&other.time_left())
+    }
+}
+
+impl PartialEq for Todo {
+    fn eq(&self, other: &Self) -> bool {
+        self.title == other.title
+    }
+}
+
+impl Eq for Todo {}
 
 #[derive(Debug)]
 pub struct Date {
@@ -50,6 +71,44 @@ pub struct TimeRemaining {
     pub hours: i32,
     pub minutes: i32,
 }
+
+impl PartialOrd for TimeRemaining {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for TimeRemaining {
+    fn cmp(&self, other: &Self) -> Ordering {
+        if self.days > other.days {
+            Ordering::Greater
+        } else if self.days < other.days {
+            Ordering::Less
+        } else {
+            if self.hours > other.hours {
+                Ordering::Greater
+            } else if self.hours < other.hours {
+                Ordering::Less
+            } else {
+                if self.minutes > other.minutes {
+                    Ordering::Greater
+                } else if self.minutes < other.minutes {
+                    Ordering::Less
+                } else {
+                    Ordering::Equal
+                }
+            }
+        }
+    }
+}
+
+impl PartialEq for TimeRemaining {
+    fn eq(&self, other: &Self) -> bool {
+        self.days == other.days && self.hours == other.hours && self.minutes == other.minutes
+    }
+}
+
+impl Eq for TimeRemaining {}
 
 impl fmt::Display for TimeRemaining {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -98,9 +157,15 @@ impl Todo {
     }
 
     pub fn to_json_todo(&self) -> TodoJson {
-        TodoJson { title: self.title.to_owned(),  description: self.description.to_owned(), topic: self.topic.to_owned(), date: format!("{}", self.date), time: format!("{}", self.time) }
+        TodoJson {
+            title: self.title.to_owned(),
+            description: self.description.to_owned(),
+            topic: self.topic.to_owned(),
+            date: format!("{}", self.date),
+            time: format!("{}", self.time),
+        }
     }
-    
+
     pub fn new() -> Todo {
         let todo_json = TodoJson {
             title: get_input("Enter the title: "),
@@ -109,7 +174,7 @@ impl Todo {
             date: get_input("Enter the date: "),
             time: get_input("Enter the time: "),
         };
-        
+
         Todo {
             title: todo_json.title.to_owned(),
             description: todo_json.description.to_owned(),

@@ -1,11 +1,10 @@
-mod todo;
 mod parser;
-use std::env;
+mod todo;
 use crate::todo::Todo;
-use parser::{save_todo, get_input};
+use parser::{get_input, save_todo};
+use std::env;
 
 fn main() {
-
     let mut todos = parser::parse_todo();
 
     let args: Vec<String> = env::args().collect();
@@ -17,15 +16,15 @@ fn main() {
             for todo in todos {
                 println!("{}", todo);
             }
-        },
+        }
         2 => {
             let argument = &args[1];
             match argument.as_str() {
                 "add" => {
                     let todo = Todo::new();
                     todos.push(todo);
-                    save_todo(&todos);
-                },
+                    save_todo(&mut todos);
+                }
                 "remove" => {
                     let title_to_remove = get_input("Enter the title to remove: ");
                     let mut index_to_remove: i32 = -1;
@@ -39,13 +38,13 @@ fn main() {
                         println!("No matching title was found!");
                     } else {
                         todos.remove(index_to_remove as usize);
-                        save_todo(&todos);
+                        save_todo(&mut todos);
                     }
-
-                },
+                }
                 _ => (),
             }
-        },
+        }
         _ => (),
     }
 }
+

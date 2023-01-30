@@ -1,20 +1,19 @@
+use serde::{Deserialize, Serialize};
 use serde_json;
 use std::io::{self, Write};
-use serde::{Serialize, Deserialize};
 
 use std::fs;
 
-use crate::todo::{Todo, Date, Time};
+use crate::todo::{Date, Time, Todo};
 
 #[derive(Deserialize, Serialize)]
 pub struct TodoJson {
     pub title: String,
     pub description: String,
     pub topic: String,
-    pub date: String, 
-    pub time: String, 
+    pub date: String,
+    pub time: String,
 }
-
 
 #[derive(Deserialize, Serialize)]
 pub struct TodoVector {
@@ -27,7 +26,7 @@ impl TodoJson {
         Date {
             year: split[2].parse::<i32>().unwrap(),
             month: split[1].parse::<u32>().unwrap(),
-            day:  split[0].parse::<u32>().unwrap(),
+            day: split[0].parse::<u32>().unwrap(),
         }
     }
 
@@ -44,9 +43,9 @@ pub fn parse_todo() -> Vec<Todo> {
     let todo_json = fs::read_to_string("todo.json").unwrap();
 
     let json_todos: TodoVector = serde_json::from_str(todo_json.as_str()).unwrap();
-    
+
     let mut todos: Vec<Todo> = Vec::new();
-    
+
     for json_todo in json_todos.todo {
         let todo = Todo {
             title: json_todo.title.to_owned(),
@@ -61,7 +60,9 @@ pub fn parse_todo() -> Vec<Todo> {
     todos
 }
 
-pub fn save_todo(todos: &Vec<Todo>) { 
+pub fn save_todo(todos: &mut Vec<Todo>) {
+    todos.sort();
+
     let mut todo_vector = TodoVector { todo: Vec::new() };
 
     for todo in todos {
@@ -69,7 +70,7 @@ pub fn save_todo(todos: &Vec<Todo>) {
     }
 
     let json_string = serde_json::to_string_pretty(&todo_vector).unwrap();
-    
+
     fs::write("todo.json", json_string).unwrap();
 }
 
@@ -79,6 +80,7 @@ pub fn get_input(prompt: &str) -> String {
     let mut input = String::new();
     let stdin = io::stdin();
     stdin.read_line(&mut input).unwrap();
-    
+
     String::from(input.trim())
 }
+
