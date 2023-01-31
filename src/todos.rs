@@ -1,6 +1,6 @@
 use crate::json_todo::TodoVector;
-use crate::Select;
-use crate::Todo;
+use crate::todo::Todo;
+use inquire::Select;
 
 use serde_json;
 use std::fmt;
