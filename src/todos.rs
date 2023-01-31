@@ -39,10 +39,7 @@ impl Todos {
     }
 
     pub fn remove(&mut self) {
-        let mut options = Vec::new();
-        for todo in &self.todos {
-            options.push(todo.title.to_string());
-        }
+        let options = self.get_titles();
         let title_to_remove = Select::new("Enter the title to remove: ", options).prompt();
         match title_to_remove {
             Ok(title_to_remove) => {
@@ -64,6 +61,23 @@ impl Todos {
         }
     }
 
+    pub fn update(&mut self) {
+        let options = self.get_titles();
+        let title_to_update = Select::new("Enter the title to remove: ", options).prompt();
+
+        match title_to_update {
+            Ok(title_to_update) => {
+                for todo in self.todos.iter_mut() {
+                    if todo.title == title_to_update {
+                        todo.edit();
+                    }
+                }
+                self.save();
+            }
+            Err(_) => (),
+        }
+    }
+
     pub fn sort(&mut self) {
         self.todos.sort();
     }
@@ -80,6 +94,14 @@ impl Todos {
         let json_string = serde_json::to_string_pretty(&todo_vector).unwrap();
 
         fs::write("todo.json", json_string).unwrap();
+    }
+
+    pub fn get_titles(&self) -> Vec<String> {
+        let mut titles = Vec::new();
+        for todo in &self.todos {
+            titles.push(todo.title.to_string());
+        }
+        titles
     }
 
     pub fn get_topics() -> Vec<String> {

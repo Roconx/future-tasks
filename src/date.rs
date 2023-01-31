@@ -2,6 +2,7 @@ use std::fmt;
 
 use chrono::{Datelike, NaiveDate};
 
+#[derive(Clone, Copy)]
 pub struct Date {
     pub year: i32,
     pub month: u32,
@@ -32,5 +33,11 @@ impl From<String> for Date {
             month: split[1].parse::<u32>().unwrap(),
             day: split[0].parse::<u32>().unwrap(),
         }
+    }
+}
+
+impl Into<NaiveDate> for Date {
+    fn into(self) -> NaiveDate {
+        NaiveDate::from_ymd_opt(self.year, self.month, self.day).unwrap()
     }
 }

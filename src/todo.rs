@@ -97,21 +97,40 @@ impl Todo {
             .with_default("23:59")
             .prompt()
             .unwrap();
-        let todo_json = JsonTodo {
-            title,
-            description,
-            topic,
-            date: String::new(),
-            time,
-        };
 
         Todo {
-            title: todo_json.title.to_owned(),
-            description: todo_json.description.to_owned(),
-            topic: todo_json.topic.to_owned(),
+            title: title.to_owned(),
+            description: description.to_owned(),
+            topic: topic.to_owned(),
             date: Date::from(date),
-            time: todo_json.parse_time(),
+            time: Time::from(time),
         }
+    }
+
+    pub fn edit(&mut self) {
+        self.title = Text::new("Enter the title: ")
+            .with_default(&self.title)
+            .prompt()
+            .unwrap();
+        self.description = Text::new("Enter the description: ")
+            .with_default(&self.description)
+            .prompt()
+            .unwrap();
+        self.topic = Text::new("Enter the topic: ")
+            .with_default(&self.topic)
+            .with_autocomplete(&suggester)
+            .prompt()
+            .unwrap();
+        self.date = DateSelect::new("Enter the date: ")
+            .with_default(self.date.into())
+            .prompt()
+            .unwrap()
+            .into();
+        self.time = Text::new("Enter the time: ")
+            .with_default(format!("{}", self.time).as_str())
+            .prompt()
+            .unwrap()
+            .into();
     }
 }
 

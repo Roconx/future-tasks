@@ -24,6 +24,7 @@ fn main() {
                 "remove" => todos.remove(),
                 // "late" => todos.late(),
                 // "filter" => todos.filter_by_topic(),
+                "update" => todos.update(),
                 _ => (),
             }
         }
