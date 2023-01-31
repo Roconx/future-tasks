@@ -40,7 +40,7 @@ impl Todos {
 
         let todo = Todo::new();
         self.todos.push(todo);
-        self.save_todo();
+        self.save();
     }
 
     pub fn remove(&mut self) {
@@ -62,7 +62,7 @@ impl Todos {
                     println!("No matching title was found!");
                 } else {
                     self.todos.remove(index_to_remove as usize);
-                    self.save_todo();
+                    self.save();
                 }
             }
             Err(_) => (),
@@ -73,7 +73,7 @@ impl Todos {
         self.todos.sort();
     }
 
-    pub fn save_todo(&mut self) {
+    pub fn save(&mut self) {
         self.sort();
 
         let mut todo_vector = TodoVector { todo: Vec::new() };

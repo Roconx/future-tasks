@@ -5,10 +5,8 @@ mod time_remaining;
 mod todo;
 mod todos;
 
-use crate::todo::Todo;
 use crate::todos::Todos;
 
-use inquire::Select;
 use std::env;
 
 fn main() {
