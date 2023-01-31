@@ -1,11 +1,11 @@
 use crate::date::Date;
 use crate::json_todo::JsonTodo;
-use crate::parser::get_input;
 use crate::time::Time;
 use crate::time_remaining::TimeRemaining;
 use colored::*;
 
 use chrono::{offset::Local, DateTime, TimeZone};
+use inquire::{DateSelect, Text};
 use std::cmp::Ordering;
 use std::fmt;
 use std::time::SystemTime;
@@ -85,19 +85,24 @@ impl Todo {
     }
 
     pub fn new() -> Todo {
+        let title = Text::new("Enter the title: ").prompt().unwrap();
+        let description = Text::new("Enter the description: ").prompt().unwrap();
+        let topic = Text::new("Enter the topic: ").prompt().unwrap();
+        let date = DateSelect::new("Enter the date: ").prompt().unwrap();
+        let time = Text::new("Enter the time: ").prompt().unwrap();
         let todo_json = JsonTodo {
-            title: get_input("Enter the title: "),
-            description: get_input("Enter the description: "),
-            topic: get_input("Enter the topic: "),
-            date: get_input("Enter the date: "),
-            time: get_input("Enter the time: "),
+            title,
+            description,
+            topic,
+            date: String::new(),
+            time,
         };
 
         Todo {
             title: todo_json.title.to_owned(),
             description: todo_json.description.to_owned(),
             topic: todo_json.topic.to_owned(),
-            date: todo_json.parse_date(),
+            date: Date::from(date),
             time: todo_json.parse_time(),
         }
     }

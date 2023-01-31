@@ -19,19 +19,10 @@ pub struct JsonTodo {
 
 impl JsonTodo {
     pub fn parse_date(&self) -> Date {
-        let split = self.date.split("/").collect::<Vec<&str>>(); // "dd", "mm", "yyyy"
-        Date {
-            year: split[2].parse::<i32>().unwrap(),
-            month: split[1].parse::<u32>().unwrap(),
-            day: split[0].parse::<u32>().unwrap(),
-        }
+        Date::from(self.date.to_string())
     }
 
     pub fn parse_time(&self) -> Time {
-        let split = self.time.split(":").collect::<Vec<&str>>();
-        Time {
-            hour: split[0].parse::<u32>().unwrap(),
-            minute: split[1].parse::<u32>().unwrap(),
-        }
+        Time::from(self.time.to_string())
     }
 }
