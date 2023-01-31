@@ -33,11 +33,6 @@ impl Todos {
     }
 
     pub fn add(&mut self) {
-        let mut topics = Vec::new();
-        for todo in &self.todos {
-            topics.push(todo.topic.to_string());
-        }
-
         let todo = Todo::new();
         self.todos.push(todo);
         self.save();
@@ -85,6 +80,17 @@ impl Todos {
         let json_string = serde_json::to_string_pretty(&todo_vector).unwrap();
 
         fs::write("todo.json", json_string).unwrap();
+    }
+
+    pub fn get_topics() -> Vec<String> {
+        let mut topics = Vec::new();
+        let todos = Todos::parse();
+
+        for todo in todos.todos {
+            topics.push(todo.topic.to_string());
+        }
+
+        topics
     }
 }
 

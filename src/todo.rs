@@ -2,10 +2,11 @@ use crate::date::Date;
 use crate::json_todo::JsonTodo;
 use crate::time::Time;
 use crate::time_remaining::TimeRemaining;
-use colored::*;
+use crate::todos::Todos;
 
 use chrono::{offset::Local, DateTime, TimeZone};
-use inquire::{DateSelect, Text};
+use colored::*;
+use inquire::{CustomUserError, DateSelect, Text};
 use std::cmp::Ordering;
 use std::fmt;
 use std::time::SystemTime;
@@ -87,9 +88,15 @@ impl Todo {
     pub fn new() -> Todo {
         let title = Text::new("Enter the title: ").prompt().unwrap();
         let description = Text::new("Enter the description: ").prompt().unwrap();
-        let topic = Text::new("Enter the topic: ").prompt().unwrap();
+        let topic = Text::new("Enter the topic: ")
+            .with_autocomplete(&suggester)
+            .prompt()
+            .unwrap();
         let date = DateSelect::new("Enter the date: ").prompt().unwrap();
-        let time = Text::new("Enter the time: ").prompt().unwrap();
+        let time = Text::new("Enter the time: ")
+            .with_default("23:59")
+            .prompt()
+            .unwrap();
         let todo_json = JsonTodo {
             title,
             description,
@@ -106,4 +113,16 @@ impl Todo {
             time: todo_json.parse_time(),
         }
     }
+}
+
+fn suggester(val: &str) -> Result<Vec<String>, CustomUserError> {
+    let suggestions = Todos::get_topics();
+
+    let val_lower = val.to_lowercase();
+
+    Ok(suggestions
+        .iter()
+        .filter(|s| s.to_lowercase().contains(&val_lower))
+        .map(|s| String::from(s))
+        .collect())
 }

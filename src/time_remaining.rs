@@ -7,6 +7,12 @@ pub struct TimeRemaining {
     pub minutes: i32,
 }
 
+impl TimeRemaining {
+    fn is_late(&self) -> bool {
+        self.days < 0 && self.hours < 0 && self.minutes < 0
+    }
+}
+
 impl PartialOrd for TimeRemaining {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
