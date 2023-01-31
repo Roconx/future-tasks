@@ -3,6 +3,7 @@ use crate::json_todo::JsonTodo;
 use crate::parser::get_input;
 use crate::time::Time;
 use crate::time_remaining::TimeRemaining;
+use colored::*;
 
 use chrono::{offset::Local, DateTime, TimeZone};
 use std::cmp::Ordering;
@@ -19,9 +20,9 @@ pub struct Todo {
 
 impl fmt::Display for Todo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Title: {} \n\nDescription: {} \n\nTopic: {} \n\nDue date: {} at {} \n\nTime reamaining: {}\n\n
+        write!(f, "{} {} \n\n{} {} \n\n{} {} \n\n{} {} {} {} \n\n{} {}\n\n
 ---------------------------------------------------------------------------------------------------------\n\n",
-         self.title, self.description, self.topic, self.date, self.time, self.time_left())
+         "Title:".green(), self.title, "Description:".green(), self.description, "Topic:".green(), self.topic, "Due date:".green(), self.date, "at".green(), self.time, "Time reamaining:".green(), self.time_left())
     }
 }
 
