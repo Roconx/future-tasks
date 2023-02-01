@@ -23,11 +23,22 @@ fn main() {
                 "add" => todos.add(),
                 "remove" => todos.remove(),
                 "late" => todos.late(),
-                "filter" => todos.filter_by_topic(),
+                "topic" => todos.filter_by_topic(),
                 "update" => todos.update(),
-                _ => (),
+                _ => help(),
             }
         }
         _ => (),
     }
+}
+
+fn help() {
+    println!(
+        "Unknow argument, the avaliable argument are:
+    add: Add a new todo
+    remove: Removes a todo
+    late: Filters by late todo
+    topic: Filters by topic
+    update: Update an existing todo"
+    );
 }
