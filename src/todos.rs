@@ -47,6 +47,7 @@ impl Todos {
                 for (i, todo) in self.todos.iter().enumerate() {
                     if todo.title == title_to_remove {
                         index_to_remove = i as i32;
+                        break;
                     }
                 }
 
@@ -70,6 +71,7 @@ impl Todos {
                 for todo in self.todos.iter_mut() {
                     if todo.title == title_to_update {
                         todo.edit();
+                        break;
                     }
                 }
                 self.save();
