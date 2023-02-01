@@ -22,8 +22,8 @@ fn main() {
             match argument.as_str() {
                 "add" => todos.add(),
                 "remove" => todos.remove(),
-                // "late" => todos.late(),
-                // "filter" => todos.filter_by_topic(),
+                "late" => todos.late(),
+                "filter" => todos.filter_by_topic(),
                 "update" => todos.update(),
                 _ => (),
             }

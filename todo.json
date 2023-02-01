@@ -1,6 +1,13 @@
 {
   "todo": [
     {
+      "title": "Test",
+      "description": "Test",
+      "topic": "Entorn client",
+      "date": "25/1/2023",
+      "time": "23:59"
+    },
+    {
       "title": "Joc de cartes - pokeapi",
       "description": "Crear un joc de cartes de Pokemon. Se ha de crear un sistema que permeti consultar la Poke API : https://pokeapi.co/ , seleccionant un numero de Pokemons a consultar. El resultat de la consulta s'ha de mostrar en forma de targes o cartes, on s'ha de mostrar per cadascuna: el nom, una imatge, tipus o categoria, valor d'atac i valor de defensa. Aquestes cartes s'han de poder seleccionar i deseleccionar. Un cop n'hi hagi dos de seleccionades, automàticament aquestes cartes \"lluitaran\", comparant els seus valors d'atac i defensa. Quan una carta estigui seleccionada s'ha d'indicar visualment d'alguna manera. El comportament del combat és el següent: l'atacant sempre serà la primera carta seleccionada, i el defensor la segona. El resultat del combat és: Si el valor d'atac de la primera carta és superior al valor de defensa de la segona, el guanyador és la primera carta. Si el valor d'atac de la primera carta  inferior al valor de defensa de la segona, el guanyador és la segona carta. Si el valor d'atac de la primera carta és igual al valor de defensa de la segona, el combat acaba en empat.",
       "topic": "Entorn client",

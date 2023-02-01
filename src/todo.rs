@@ -132,6 +132,10 @@ impl Todo {
             .unwrap()
             .into();
     }
+
+    pub fn is_late(&self) -> bool {
+        self.time_left().is_late()
+    }
 }
 
 fn suggester(val: &str) -> Result<Vec<String>, CustomUserError> {

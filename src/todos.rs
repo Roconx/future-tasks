@@ -78,6 +78,22 @@ impl Todos {
         }
     }
 
+    pub fn filter_by_topic(&self) {
+        let options = Self::get_topics();
+        let topic_to_filter_by = Select::new("Enter the topic to filter by: ", options).prompt();
+
+        match topic_to_filter_by {
+            Ok(topic_to_filter_by) => {
+                for todo in &self.todos {
+                    if todo.topic == topic_to_filter_by {
+                        println!("{}", todo);
+                    }
+                }
+            }
+            Err(_) => (),
+        }
+    }
+
     pub fn sort(&mut self) {
         self.todos.sort();
     }
@@ -98,9 +114,11 @@ impl Todos {
 
     pub fn get_titles(&self) -> Vec<String> {
         let mut titles = Vec::new();
+
         for todo in &self.todos {
             titles.push(todo.title.to_string());
         }
+
         titles
     }
 
@@ -112,7 +130,19 @@ impl Todos {
             topics.push(todo.topic.to_string());
         }
 
+        // Removes duplicates
+        topics.sort();
+        topics.dedup();
+
         topics
+    }
+
+    pub fn late(&self) {
+        for todo in &self.todos {
+            if todo.is_late() {
+                println!("{}", todo);
+            }
+        }
     }
 }
 
