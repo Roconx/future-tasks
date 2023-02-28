@@ -1,6 +1,9 @@
 use crate::json_todo::TodoVector;
 use crate::todo::Todo;
+use crate::topic::Topic;
+use eframe::egui::RichText;
 use inquire::Select;
+use std::time::Duration;
 
 use serde_json;
 use std::fmt;
@@ -8,10 +11,11 @@ use std::fs;
 
 pub struct Todos {
     pub todos: Vec<Todo>,
+    pub selected_topic: Topic,
 }
 
 impl Todos {
-    pub fn parse() -> Todos {
+    pub fn parse() -> Vec<Todo> {
         let todo_json = fs::read_to_string("todo.json").unwrap();
 
         let json_todos: TodoVector = serde_json::from_str(todo_json.as_str()).unwrap();
@@ -29,7 +33,7 @@ impl Todos {
             todos.push(todo);
         }
 
-        Todos { todos }
+        todos
     }
 
     pub fn add(&mut self) {
@@ -128,7 +132,7 @@ impl Todos {
         let mut topics = Vec::new();
         let todos = Todos::parse();
 
-        for todo in todos.todos {
+        for todo in todos {
             topics.push(todo.topic.to_string());
         }
 
@@ -146,6 +150,53 @@ impl Todos {
             }
         }
     }
+
+    pub fn add_combo_box(&mut self, ui: &mut egui::Ui) {
+        egui::ComboBox::from_label("Filter by")
+            .selected_text(format!("{}", self.selected_topic))
+            .show_ui(ui, |ui| {
+                ui.selectable_value(
+                    &mut self.selected_topic,
+                    Topic::All,
+                    format!("{}", Topic::All),
+                );
+                ui.selectable_value(
+                    &mut self.selected_topic,
+                    Topic::Late,
+                    format!("{}", Topic::Late),
+                );
+                for topic in Todos::get_topics() {
+                    ui.selectable_value(
+                        &mut self.selected_topic,
+                        Topic::Topic(topic.clone()),
+                        topic,
+                    );
+                }
+            });
+        // if ui.button(RichText::new("+").size(20.).strong()).clicked() {
+        //     egui::Window::new("My Window").show(ctx, |ui| {
+        //         ui.label("Hello World!");
+        //     });
+        // }
+    }
+
+    pub fn display_todos(&mut self, ui: &mut egui::Ui) {
+        for todo in &self.todos {
+            match &self.selected_topic {
+                Topic::All => todo.display(ui),
+                Topic::Topic(topic) => {
+                    if todo.topic.as_str() == topic {
+                        todo.display(ui);
+                    }
+                }
+                Topic::Late => {
+                    if todo.is_late() {
+                        todo.display(ui);
+                    }
+                }
+            }
+        }
+    }
 }
 
 impl fmt::Display for Todos {
@@ -154,5 +205,33 @@ impl fmt::Display for Todos {
             write!(f, "{}", todo)?
         }
         Ok(())
+    }
+}
+
+impl eframe::App for Todos {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // Updates the list
+        self.todos = Todos::parse();
+        // Creates the ui
+        egui::CentralPanel::default().show(ctx, |ui| {
+            ui.horizontal(|ui| {
+                ui.heading(RichText::new("Future Tasks").size(25.).strong());
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Max), |ui| {
+                    self.add_combo_box(ui);
+                })
+            });
+            ui.separator();
+            egui::ScrollArea::vertical().show(ui, |ui| self.display_todos(ui));
+            ctx.request_repaint_after(Duration::from_secs(60));
+        });
+    }
+}
+
+impl Default for Todos {
+    fn default() -> Self {
+        Todos {
+            todos: Todos::parse(),
+            selected_topic: Topic::All,
+        }
     }
 }
