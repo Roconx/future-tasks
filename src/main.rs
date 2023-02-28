@@ -4,18 +4,30 @@ mod time;
 mod time_remaining;
 mod todo;
 mod todos;
+mod topic;
 
 use crate::todos::Todos;
 
+use eframe::egui;
 use std::env;
 
 fn main() {
-    let mut todos = Todos::parse();
+    let mut todos = Todos::default();
     let args: Vec<String> = env::args().collect();
 
     match args.len() {
         1 => {
-            println!("{}", todos);
+            let options = eframe::NativeOptions {
+                initial_window_size: Some(egui::vec2(320.0, 500.0)),
+                ..Default::default()
+            };
+            eframe::run_native(
+                "Future Tasks",
+                options,
+                Box::new(|_cc| Box::new(Todos::default())),
+            )
+            .unwrap();
+            // println!("{}", todos);
         }
         2 => {
             let argument = &args[1];
