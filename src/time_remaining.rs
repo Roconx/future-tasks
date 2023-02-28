@@ -9,7 +9,7 @@ pub struct TimeRemaining {
 
 impl TimeRemaining {
     pub fn is_late(&self) -> bool {
-        self.days < 0 && self.hours < 0 && self.minutes < 0
+        self.days <= 0 && self.hours <= 0 && self.minutes < 0
     }
 }
 
