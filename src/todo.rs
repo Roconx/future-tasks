@@ -3,6 +3,7 @@ use crate::json_todo::JsonTodo;
 use crate::time::Time;
 use crate::time_remaining::TimeRemaining;
 use crate::todos::Todos;
+use eframe::egui::RichText;
 
 use chrono::{offset::Local, DateTime, TimeZone};
 use colored::*;
@@ -136,6 +137,27 @@ impl Todo {
     pub fn is_late(&self) -> bool {
         self.time_left().is_late()
     }
+
+    pub fn display(&self, ui: &mut egui::Ui) {
+        ui.heading(RichText::new(&self.title).strong());
+        ui.horizontal_wrapped(|ui| {
+            ui.label("Descrption: ");
+            ui.strong(&self.description);
+        });
+        ui.horizontal_wrapped(|ui| {
+            ui.label("Topic: ");
+            ui.strong(&self.topic);
+        });
+        ui.horizontal_wrapped(|ui| {
+            ui.label("Due date: ");
+            ui.strong(format!("{} at {}", self.date, self.time));
+        });
+        ui.horizontal_wrapped(|ui| {
+            ui.label("Time remaining: ");
+            ui.strong(format!("{}", self.time_left()));
+        });
+        ui.separator();
+    }
 }
 
 fn suggester(val: &str) -> Result<Vec<String>, CustomUserError> {
@@ -148,4 +170,24 @@ fn suggester(val: &str) -> Result<Vec<String>, CustomUserError> {
         .filter(|s| s.to_lowercase().contains(&val_lower))
         .map(|s| String::from(s))
         .collect())
+}
+
+impl Default for Todo {
+    fn default() -> Self {
+        Todo {
+            title: String::new(),
+            description: String::new(),
+            topic: String::new(),
+            date: Date::from(String::from("1/1/2023")),
+            time: Time::from(String::from("23:59")),
+        }
+    }
+}
+
+impl eframe::App for Todo {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            ui.label("adf");
+        });
+    }
 }
