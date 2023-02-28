@@ -7,7 +7,17 @@ pub struct Time {
 
 impl fmt::Display for Time {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}:{}", self.hour, self.minute)
+        let hour = if self.hour == 0 {
+            String::from("00")
+        } else {
+            format!("{}", self.hour)
+        };
+        let minute = if self.minute == 0 {
+            String::from("00")
+        } else {
+            format!("{}", self.minute)
+        };
+        write!(f, "{}:{}", hour, minute)
     }
 }
 
