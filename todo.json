@@ -5,21 +5,21 @@
       "description": "10 i 11 opcionals, 12 i 14 obligatoris",
       "topic": "Estadistica",
       "date": "28/2/2023",
-      "time": "18:0"
+      "time": "18:00"
     },
     {
       "title": "Creacio de entorn en HA utilitzant Elastic Beanstalk",
       "description": "Creacio de entorn en HA utilitzant Elastic Beanstalk",
       "topic": "SiM",
       "date": "10/3/2023",
-      "time": "16:0"
+      "time": "16:00"
     },
     {
       "title": "Peli Tetris",
       "description": "Surt la peli de tetris a apple TV",
       "topic": "Apple TV",
       "date": "31/3/2023",
-      "time": "20:0"
+      "time": "20:00"
     }
   ]
 }

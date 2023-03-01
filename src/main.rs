@@ -18,7 +18,7 @@ fn main() {
     match args.len() {
         1 => {
             let options = eframe::NativeOptions {
-                initial_window_size: Some(egui::vec2(320.0, 500.0)),
+                initial_window_size: Some(egui::vec2(360.0, 500.0)),
                 ..Default::default()
             };
             eframe::run_native(
@@ -27,6 +27,7 @@ fn main() {
                 Box::new(|_cc| Box::new(Todos::default())),
             )
             .unwrap();
+
             // println!("{}", todos);
         }
         2 => {

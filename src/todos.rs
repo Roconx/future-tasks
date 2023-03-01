@@ -29,6 +29,7 @@ impl Todos {
                 topic: json_todo.topic.to_string(),
                 date: json_todo.parse_date(),
                 time: json_todo.parse_time(),
+                editing: false,
             };
             todos.push(todo);
         }
@@ -173,28 +174,33 @@ impl Todos {
                     );
                 }
             });
-        // if ui.button(RichText::new("+").size(20.).strong()).clicked() {
-        //     egui::Window::new("My Window").show(ctx, |ui| {
-        //         ui.label("Hello World!");
-        //     });
-        // }
     }
 
     pub fn display_todos(&mut self, ui: &mut egui::Ui) {
-        for todo in &self.todos {
-            match &self.selected_topic {
+        let mut should_save = false;
+        for todo in self.todos.iter_mut() {
+            if match &self.selected_topic {
                 Topic::All => todo.display(ui),
                 Topic::Topic(topic) => {
                     if todo.topic.as_str() == topic {
-                        todo.display(ui);
+                        todo.display(ui)
+                    } else {
+                        false
                     }
                 }
                 Topic::Late => {
                     if todo.is_late() {
-                        todo.display(ui);
+                        todo.display(ui)
+                    } else {
+                        false
                     }
                 }
+            } {
+                should_save = true;
             }
+        }
+        if should_save {
+            self.save();
         }
     }
 }
@@ -211,7 +217,7 @@ impl fmt::Display for Todos {
 impl eframe::App for Todos {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         // Updates the list
-        self.todos = Todos::parse();
+        // self.todos = Todos::parse();
         // Creates the ui
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.horizontal(|ui| {
@@ -219,6 +225,11 @@ impl eframe::App for Todos {
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Max), |ui| {
                     self.add_combo_box(ui);
                 })
+                // if ui.button(RichText::new("+").size(20.).strong()).clicked() {
+                //     egui::Window::new("My Window").show(ctx, |ui| {
+                //         ui.label("Hello World!");
+                //     });
+                // }
             });
             ui.separator();
             egui::ScrollArea::vertical().show(ui, |ui| self.display_todos(ui));

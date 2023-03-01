@@ -18,6 +18,7 @@ pub struct Todo {
     pub topic: String,
     pub date: Date, // dd/mm/yyyy
     pub time: Time, // hh:mm
+    pub editing: bool,
 }
 
 impl fmt::Display for Todo {
@@ -105,6 +106,7 @@ impl Todo {
             topic: topic.to_owned(),
             date: Date::from(date),
             time: Time::from(time),
+            editing: false,
         }
     }
 
@@ -138,16 +140,15 @@ impl Todo {
         self.time_left().is_late()
     }
 
-    pub fn display(&self, ui: &mut egui::Ui) {
-        ui.heading(RichText::new(&self.title).strong());
-        ui.horizontal_wrapped(|ui| {
-            ui.label("Descrption: ");
-            ui.strong(&self.description);
-        });
-        ui.horizontal_wrapped(|ui| {
-            ui.label("Topic: ");
-            ui.strong(&self.topic);
-        });
+    pub fn display(&mut self, ui: &mut egui::Ui) -> bool {
+        let mut should_save = false;
+
+        self.display_title(ui);
+
+        self.display_description(ui);
+
+        self.display_topic(ui);
+
         ui.horizontal_wrapped(|ui| {
             ui.label("Due date: ");
             ui.strong(format!("{} at {}", self.date, self.time));
@@ -155,9 +156,59 @@ impl Todo {
         ui.horizontal_wrapped(|ui| {
             ui.label("Time remaining: ");
             ui.strong(format!("{}", self.time_left()));
+            ui.with_layout(egui::Layout::right_to_left(egui::Align::Max), |ui| {
+                if ui.button("Edit").clicked() {
+                    if self.editing {
+                        should_save = true;
+                    }
+                    self.editing = !self.editing;
+                }
+            });
         });
         ui.separator();
+        should_save
     }
+
+    fn display_title(&mut self, ui: &mut egui::Ui) {
+        if self.editing {
+            ui.text_edit_singleline(&mut self.title);
+        } else {
+            ui.heading(RichText::new(&self.title).strong());
+        }
+    }
+
+    fn display_description(&mut self, ui: &mut egui::Ui) {
+        ui.horizontal_wrapped(|ui| {
+            ui.label("Description: ");
+            if self.editing {
+                ui.text_edit_singleline(&mut self.description);
+            } else {
+                ui.strong(&self.description);
+            }
+        });
+    }
+
+    fn display_topic(&mut self, ui: &mut egui::Ui) {
+        ui.horizontal_wrapped(|ui| {
+            ui.label("Topic: ");
+            if self.editing {
+                ui.text_edit_singleline(&mut self.topic);
+            } else {
+                ui.strong(&self.topic);
+            }
+        });
+    }
+
+    // fn display_date(&mut self, ui: &mut egui::Ui) {
+    //     ui.horizontal_wrapped(|ui| {
+    //         ui.label("Due date: ");
+    //         if self.editing {
+    //             ui.text_edit_singleline(&mut self.date);
+    //         } else {
+    //             ui.strong(format!("{} at {}", self.date, self.time));
+    //         }
+    //     });
+    // }
 }
 
 fn suggester(val: &str) -> Result<Vec<String>, CustomUserError> {
@@ -180,6 +231,7 @@ impl Default for Todo {
             topic: String::new(),
             date: Date::from(String::from("1/1/2023")),
             time: Time::from(String::from("23:59")),
+            editing: false,
         }
     }
 }
