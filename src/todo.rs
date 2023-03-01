@@ -149,6 +149,8 @@ impl Todo {
 
         self.display_topic(ui);
 
+        // self.display_date(ui);
+
         ui.horizontal_wrapped(|ui| {
             ui.label("Due date: ");
             ui.strong(format!("{} at {}", self.date, self.time));
@@ -181,7 +183,7 @@ impl Todo {
         ui.horizontal_wrapped(|ui| {
             ui.label("Description: ");
             if self.editing {
-                ui.text_edit_singleline(&mut self.description);
+                ui.text_edit_multiline(&mut self.description);
             } else {
                 ui.strong(&self.description);
             }
